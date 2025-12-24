@@ -1,0 +1,2 @@
+# 📝 Task Tracker (Go) 
+A simple **Task Tracker** project built with **Go** as part of the [roadmap.sh Task Tracker challenge](https://roadmap.sh/projects/task-tracker). This project helps users manage tasks efficiently with basic CRUD operations via a CLI interface.
