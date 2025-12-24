@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -34,7 +33,7 @@ func main() {
 
 	value := os.Args[2]
 
-	target, conErr := strconv.Atoi(value)
+	_, conErr := strconv.Atoi(value)
 
 	if conErr != nil {
 		log.Fatal(conErr)
