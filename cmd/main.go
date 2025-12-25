@@ -2,9 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"os"
-	"strconv"
 	"time"
 
 	"github.com/fatih/color"
@@ -33,12 +33,6 @@ func main() {
 
 	value := os.Args[2]
 
-	_, conErr := strconv.Atoi(value)
-
-	if conErr != nil {
-		log.Fatal(conErr)
-	}
-
 	switch os.Args[1] {
 	case "add":
 		newTask := Todo{
@@ -49,15 +43,36 @@ func main() {
 			UpdatedAt:   time.Now(),
 		}
 		tasks = append(tasks, newTask)
-		ApplyChanges(tasks, file)
+		ApplyChanges(tasks, "task.json")
 		color.Green("Add new task complete with ID : %d", len(tasks))
 		break
 	case "update":
+		IndexFinder(value, func(target int) {
+			updateValue := os.Args[3]
+			for i, task := range tasks {
+				if task.Id == target {
+					tasks[i].updateField(updateValue, "Description")
+				}
+			}
+			ApplyChanges(tasks, "task.json")
+			color.Green("Update task complete with ID : %d", target)
+		})
 		break
 	case "delete":
+		IndexFinder(value, func(target int) {
+			for i, task := range tasks {
 
+				if task.Id == target {
+					tasks = append(tasks[:i], tasks[i+1:]...)
+				}
+			}
+			ApplyChanges(tasks, "task.json")
+			color.Green("Delete task complete with ID : %d", target)
+		})
 		break
 	case "list":
+		fmt.Printf("%-5s %-20s %-10s\n", "ID", "Description", "Status")
+		fmt.Println("-------------------------------------------")
 		break
 	case "mark-in-progress":
 		break

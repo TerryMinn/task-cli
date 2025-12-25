@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+	"strconv"
 	"time"
 )
 
@@ -15,6 +16,8 @@ const (
 	done
 )
 
+type Callback func(int)
+
 type Todo struct {
 	Id          int       `json:"id"`
 	Description string    `json:"description"`
@@ -23,15 +26,34 @@ type Todo struct {
 	UpdatedAt   time.Time `json:"updatedAt"`
 }
 
-func ApplyChanges(newTodo []Todo, file *os.File) {
+func (todo *Todo) updateField(value string, fieldName string) {
+	switch fieldName {
+	case "Description":
+		todo.Description = value
+		break
+	default:
+		todo.Description = value
+	}
+	todo.UpdatedAt = time.Now()
+}
+
+func ApplyChanges(newTodo []Todo, filename string) {
 	jsonData, err := json.MarshalIndent(newTodo, "", "  ")
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if _, err := file.WriteString(string(jsonData)); err != nil {
+	// Clean up (truncate + overwrite)
+	if err := os.WriteFile(filename, jsonData, 0644); err != nil {
 		log.Fatal(err)
 	}
+}
 
+func IndexFinder(value string, cb Callback) {
+	if target, conErr := strconv.Atoi(value); conErr != nil {
+		log.Fatal(conErr)
+	} else {
+		cb(target)
+	}
 }
