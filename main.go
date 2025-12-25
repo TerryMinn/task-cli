@@ -3,11 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"log"
 	"os"
 	"time"
 
 	"github.com/TerryMinn/task-cli/cmd"
+	"github.com/TerryMinn/task-cli/lib"
 	"github.com/fatih/color"
 )
 
@@ -19,7 +21,7 @@ func main() {
 
 	defer file.Close()
 
-	raw, dataError := os.ReadFile("task.json")
+	raw, dataError := io.ReadAll(file)
 	if dataError != nil {
 		log.Fatal(dataError)
 	}
@@ -32,10 +34,14 @@ func main() {
 		}
 	}
 
-	value := os.Args[2]
+	if len(os.Args) < 2 {
+		fmt.Println("Error: missing argument. Usage: task-cli <file>")
+		os.Exit(1)
+	}
 
 	switch os.Args[1] {
 	case "add":
+		value := os.Args[2]
 		newTask := cmd.Todo{
 			Id:          len(tasks) + 1,
 			Description: value,
@@ -48,6 +54,7 @@ func main() {
 		color.Green("Add new task complete with ID : %d", len(tasks))
 		break
 	case "update":
+		value := os.Args[2]
 		cmd.IndexFinder(value, func(target int) {
 			updateValue := os.Args[3]
 			for i, task := range tasks {
@@ -60,6 +67,7 @@ func main() {
 		})
 		break
 	case "delete":
+		value := os.Args[2]
 		cmd.IndexFinder(value, func(target int) {
 			for i, task := range tasks {
 
@@ -74,10 +82,34 @@ func main() {
 	case "list":
 		fmt.Printf("%-5s %-20s %-10s\n", "ID", "Description", "Status")
 		fmt.Println("-------------------------------------------")
+		for _, task := range tasks {
+			fmt.Printf("%-5d %-20s %-10s\n", task.Id, task.Description, lib.StatusChecker(task.Status))
+		}
+
 		break
 	case "mark-in-progress":
+		value := os.Args[2]
+		cmd.IndexFinder(value, func(target int) {
+			for i, task := range tasks {
+				if task.Id == target {
+					tasks[i].Status = 1
+				}
+			}
+			cmd.ApplyChanges(tasks, "task.json")
+			color.Green("Start task complete with ID : %d", target)
+		})
 		break
 	case "mark-done":
+		value := os.Args[2]
+		cmd.IndexFinder(value, func(target int) {
+			for i, task := range tasks {
+				if task.Id == target {
+					tasks[i].Status = 2
+				}
+			}
+			cmd.ApplyChanges(tasks, "task.json")
+			color.Green("Done task complete with ID : %d", target)
+		})
 		break
 	default:
 		fmt.Printf("task management command not found\n")
