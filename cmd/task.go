@@ -1,4 +1,4 @@
-package main
+package cmd
 
 import (
 	"encoding/json"
@@ -24,17 +24,6 @@ type Todo struct {
 	Status      Status    `json:"status"`
 	CreatedAt   time.Time `json:"createdAt"`
 	UpdatedAt   time.Time `json:"updatedAt"`
-}
-
-func (todo *Todo) updateField(value string, fieldName string) {
-	switch fieldName {
-	case "Description":
-		todo.Description = value
-		break
-	default:
-		todo.Description = value
-	}
-	todo.UpdatedAt = time.Now()
 }
 
 func ApplyChanges(newTodo []Todo, filename string) {

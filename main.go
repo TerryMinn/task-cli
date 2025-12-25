@@ -7,6 +7,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/TerryMinn/task-cli/cmd"
 	"github.com/fatih/color"
 )
 
@@ -23,7 +24,7 @@ func main() {
 		log.Fatal(dataError)
 	}
 
-	var tasks []Todo
+	var tasks []cmd.Todo
 
 	if len(raw) > 0 {
 		if err := json.Unmarshal(raw, &tasks); err != nil {
@@ -35,38 +36,38 @@ func main() {
 
 	switch os.Args[1] {
 	case "add":
-		newTask := Todo{
+		newTask := cmd.Todo{
 			Id:          len(tasks) + 1,
 			Description: value,
-			Status:      todo,
+			Status:      0,
 			CreatedAt:   time.Now(),
 			UpdatedAt:   time.Now(),
 		}
 		tasks = append(tasks, newTask)
-		ApplyChanges(tasks, "task.json")
+		cmd.ApplyChanges(tasks, "task.json")
 		color.Green("Add new task complete with ID : %d", len(tasks))
 		break
 	case "update":
-		IndexFinder(value, func(target int) {
+		cmd.IndexFinder(value, func(target int) {
 			updateValue := os.Args[3]
 			for i, task := range tasks {
 				if task.Id == target {
-					tasks[i].updateField(updateValue, "Description")
+					tasks[i].Description = updateValue
 				}
 			}
-			ApplyChanges(tasks, "task.json")
+			cmd.ApplyChanges(tasks, "task.json")
 			color.Green("Update task complete with ID : %d", target)
 		})
 		break
 	case "delete":
-		IndexFinder(value, func(target int) {
+		cmd.IndexFinder(value, func(target int) {
 			for i, task := range tasks {
 
 				if task.Id == target {
 					tasks = append(tasks[:i], tasks[i+1:]...)
 				}
 			}
-			ApplyChanges(tasks, "task.json")
+			cmd.ApplyChanges(tasks, "task.json")
 			color.Green("Delete task complete with ID : %d", target)
 		})
 		break
@@ -79,5 +80,6 @@ func main() {
 	case "mark-done":
 		break
 	default:
+		fmt.Printf("task management command not found\n")
 	}
 }
