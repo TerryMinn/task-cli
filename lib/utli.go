@@ -5,9 +5,9 @@ import (
 )
 
 func StatusChecker(status cmd.Status) string {
-	if status == 0 {
+	if status == cmd.TASK {
 		return "Todo"
-	} else if status == 1 {
+	} else if status == cmd.IN_PROGRESS {
 		return "In Progress"
 	} else {
 		return "Done"

@@ -11,9 +11,9 @@ import (
 type Status int
 
 const (
-	todo = iota
-	inProgress
-	done
+	TASK = iota
+	IN_PROGRESS
+	DONE
 )
 
 type Callback func(int)
