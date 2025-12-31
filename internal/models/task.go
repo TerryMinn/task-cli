@@ -2,22 +2,16 @@ package models
 
 import (
 	"time"
-)
 
-type Status int
-
-const (
-	TASK = iota
-	IN_PROGRESS
-	DONE
+	"github.com/TerryMinn/task-cli/internal/config"
 )
 
 type Callback func(int)
 
 type Todo struct {
-	Id          int       `json:"id"`
-	Description string    `json:"description"`
-	Status      Status    `json:"status"`
-	CreatedAt   time.Time `json:"createdAt"`
-	UpdatedAt   time.Time `json:"updatedAt"`
+	Id          int              `json:"id"`
+	Description string           `json:"description"`
+	Status      config.Operation `json:"status"`
+	CreatedAt   time.Time        `json:"createdAt"`
+	UpdatedAt   time.Time        `json:"updatedAt"`
 }

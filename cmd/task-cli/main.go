@@ -73,69 +73,25 @@ func main() {
 		break
 
 	case config.List:
-		fmt.Printf("%-5s %-20s %-10s\n", "ID", "Description", "Status")
-		fmt.Println("-------------------------------------------")
-
-		if len(os.Args) > 2 {
-			goto OPTION
-		}
-
-		for _, task := range tasks {
-			fmt.Printf("%-5d %-20s %-10s\n", task.Id, task.Description, utils.StatusChecker(task.Status))
-		}
-
-	OPTION:
-
-		switch app.ListOperation {
-		case config.Todo:
-			for _, task := range tasks {
-				if task.Status == models.TASK {
-					fmt.Printf("%-5d %-20s %-10s\n", task.Id, task.Description, utils.StatusChecker(task.Status))
-				}
-			}
-			break
-		case config.InProgress:
-			for _, task := range tasks {
-				if task.Status == models.IN_PROGRESS {
-					fmt.Printf("%-5d %-20s %-10s\n", task.Id, task.Description, utils.StatusChecker(task.Status))
-				}
-			}
-			break
-		case config.Done:
-			for _, task := range tasks {
-				if task.Status == models.DONE {
-					fmt.Printf("%-5d %-20s %-10s\n", task.Id, task.Description, utils.StatusChecker(task.Status))
-				}
-			}
-			break
-		default:
-			fmt.Println("Error: invalid argument. Usage: task-task-cli <file>")
-			os.Exit(1)
-		}
+		service.GetTodoList(tasks, app)
 		break
 
-	case "mark-in-progress":
-		utils.IndexFinderOld(func(target int) {
-			for i, task := range tasks {
-				if task.Id == target {
-					tasks[i].Status = 1
-				}
-			}
-			utils.ApplyChanges(tasks, "task.json")
-			color.Green("Start task complete with ID : %d", target)
-		})
+	case config.MarkInProgress:
+		target := service.MutateTodo(&tasks, service.Type(config.MarkInProgress), *input)
+		utils.ApplyChanges(tasks, "task.json")
+		color.Green("Start task with ID : %d", target)
 		break
 
-	case "mark-done":
-		utils.IndexFinderOld(func(target int) {
-			for i, task := range tasks {
-				if task.Id == target {
-					tasks[i].Status = 2
-				}
-			}
-			utils.ApplyChanges(tasks, "task.json")
-			color.Green("Done task complete with ID : %d", target)
-		})
+	case config.MarkDone:
+		target := service.MutateTodo(&tasks, service.Type(config.MarkDone), *input)
+		utils.ApplyChanges(tasks, "task.json")
+		color.Green("Done task complete with ID : %d", target)
+		break
+
+	case config.MarkTodo:
+		target := service.MutateTodo(&tasks, service.Type(config.MarkTodo), *input)
+		utils.ApplyChanges(tasks, "task.json")
+		color.Green("Done task complete with ID : %d", target)
 		break
 
 	default:

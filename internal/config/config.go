@@ -12,6 +12,7 @@ const (
 	Todo           Operation = "todo"
 	MarkInProgress Operation = "mark-in-progress"
 	MarkDone       Operation = "mark-done"
+	MarkTodo       Operation = "mark-todo"
 )
 
 type Application struct {

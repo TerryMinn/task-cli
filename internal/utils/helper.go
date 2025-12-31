@@ -6,13 +6,14 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/TerryMinn/task-cli/internal/config"
 	"github.com/TerryMinn/task-cli/internal/models"
 )
 
-func StatusChecker(status models.Status) string {
-	if status == models.TASK {
+func StatusChecker(status config.Operation) string {
+	if status == config.Todo {
 		return "Todo"
-	} else if status == models.IN_PROGRESS {
+	} else if status == config.InProgress {
 		return "In Progress"
 	} else {
 		return "Done"
@@ -47,9 +48,9 @@ func IndexFinder(tasks []models.Todo, cb models.Callback) {
 		log.Fatal(conErr)
 	} else {
 		var target int
-		for index, t := range tasks {
+		for _, t := range tasks {
 			if t.Id == num {
-				target = index
+				target = t.Id
 			}
 		}
 		cb(target)

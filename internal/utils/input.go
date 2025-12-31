@@ -13,7 +13,9 @@ type Input struct {
 func GetUserInput(cb func()) *Input {
 	input := Input{}
 
-	if len(os.Args) == 3 {
+	if len(os.Args) == 2 {
+		input.Op = os.Args[1]
+	} else if len(os.Args) == 3 {
 		input.Op = os.Args[1]
 		input.Value = os.Args[2]
 	} else if len(os.Args) == 4 {
